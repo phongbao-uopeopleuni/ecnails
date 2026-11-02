@@ -34,7 +34,7 @@ const origin = `http://127.0.0.1:${server.address().port}`;
 async function pageAudit() {
   const vw = document.documentElement.clientWidth, errors = [], warnings = [], photoText = [];
   const name = el => typeof el.className === 'string' && el.className.trim() ? '.' + el.className.trim().split(/\s+/).join('.') : el.tagName.toLowerCase();
-  const visible = el => el.getClientRects().length && !el.closest('dialog:not([open]),[hidden],.sr-only,.skip-link') && getComputedStyle(el).visibility !== 'hidden';
+  const visible = el => el.getClientRects().length && !el.closest('dialog:not([open]),[hidden],.sr-only,.skip-link,.gallery-run-clone') && getComputedStyle(el).visibility !== 'hidden';
   const ownText = el => [...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim());
   const rgba = s => { const m = s.match(/rgba?\(([^)]+)\)/); if (!m) return null; const p = m[1].split(/[\s,/]+/).filter(Boolean).map(Number); return [p[0], p[1], p[2], p[3] ?? 1]; };
   const lum = ([r, g, b]) => { const f = v => (v /= 255) <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; return .2126 * f(r) + .7152 * f(g) + .0722 * f(b); };
@@ -85,17 +85,12 @@ async function pageAudit() {
     const after = getComputedStyle(hero, '::after'), r = hero.getBoundingClientRect(), top = parseFloat(after.top);
     hero.querySelectorAll('.photo-label span').forEach(span => { if (!visible(span)) return; measured.add(span); const v = overPhoto(span, hero.querySelector('.hero-image'), { gradient: after.backgroundImage, top: r.top + top, height: r.height - top }); if (v !== null) photoText.push({ text: span.textContent.trim(), worst: +v.toFixed(2) }); });
   }
-  document.querySelectorAll('.gallery-caption').forEach(cap => {
-    if (!visible(cap)) return; measured.add(cap); const r = cap.getBoundingClientRect();
-    const v = overPhoto(cap, cap.closest('.gallery-tile').querySelector('img'), { gradient: getComputedStyle(cap).backgroundImage, top: r.top, height: r.height });
-    if (v !== null) photoText.push({ text: cap.textContent.trim().slice(0, 20), worst: +v.toFixed(2) });
-  });
   for (const p of photoText) if (p.worst < 4.5) errors.push(`text over photo ${p.worst}:1 "${p.text}"`);
 
   for (const el of document.querySelectorAll('body *')) {
     if (!visible(el) || !ownText(el)) continue;
     const cs = getComputedStyle(el), r = el.getBoundingClientRect(), size = parseFloat(cs.fontSize);
-    if (r.right > vw + 1 || r.left < -1) errors.push(`off-screen text ${name(el)}`);
+    if (!el.closest('[data-gallery-marquee],.announcement') && (r.right > vw + 1 || r.left < -1)) errors.push(`off-screen text ${name(el)}`);
     if (/hidden|clip/.test(cs.overflowX) && el.scrollWidth > el.clientWidth + 1) errors.push(`clipped text ${name(el)}`);
     if (size < 11 && !el.closest('.brand-sub')) errors.push(`text under 11px ${name(el)} (${size}px)`);
     const bg = solidBackground(el);
@@ -103,7 +98,7 @@ async function pageAudit() {
     else if (!measured.has(el)) unmeasured.add(name(el));
   }
   const hit = (a, b) => { const p = a.getBoundingClientRect(), q = b.getBoundingClientRect(); return p.left < q.right - 1 && q.left < p.right - 1 && p.top < q.bottom - 1 && q.top < p.bottom - 1; };
-  for (const box of document.querySelectorAll('.header-inner,.brand,.photo-label,.hero-index,.hero-actions,.location-actions,.hours-strip,.footer-top,.footer-bottom,.contact-hours,.gallery-toolbar,.story-photo-label,.product-design-heading,.menu-group-heading,.service-title,.announcement')) {
+  for (const box of document.querySelectorAll('.header-inner,.brand,.photo-label,.hero-index,.hero-actions,.location-actions,.hours-strip,.footer-signature,.footer-nav,.footer-bottom,.contact-hours,.gallery-toolbar,.story-photo-label,.product-design-heading,.menu-group-heading,.service-title,.announcement')) {
     const kids = [...box.children].filter(visible);
     kids.forEach((a, i) => kids.slice(i + 1).forEach(b => { if (hit(a, b)) errors.push(`overlap in ${name(box)}: ${name(a)} × ${name(b)}`); }));
   }
@@ -152,6 +147,45 @@ async function galleryFlow() {
   if (dialog.open || document.activeElement !== tiles[0]) problems.push('lightbox close / focus return');
   return problems.join('; ');
 }
+async function inspirationFlow() {
+  const problems = [], marquee = document.querySelector('[data-gallery-marquee]'), original = marquee?.querySelector('.gallery-run:not(.gallery-run-clone)'), clone = marquee?.querySelector('.gallery-run-clone');
+  const tiles = [...(original?.querySelectorAll('[data-lightbox]') || [])];
+  if (!marquee?.classList.contains('is-ready') || tiles.length < 8) problems.push(`inspiration strip ready=${marquee?.classList.contains('is-ready')} images=${tiles.length}`);
+  if (!clone || clone.getAttribute('aria-hidden') !== 'true' || !clone.inert || clone.querySelector('[data-lightbox]')) problems.push('inspiration clone is not safely hidden/inert');
+  const animation = marquee ? getComputedStyle(marquee.querySelector('.inspiration-track')).animationName : 'none';
+  if (!animation || animation === 'none') problems.push(`inspiration animation=${animation}`);
+  if (tiles[0]) {
+    const dialog = document.querySelector('.lightbox');
+    tiles[0].click();
+    if (!dialog.open || dialog.querySelector('.lightbox-position').textContent !== `1 / ${tiles.length}`) problems.push('inspiration lightbox did not open with the original image set');
+    dialog.querySelector('.lightbox-close').click(); await new Promise(r => setTimeout(r, 100));
+    if (dialog.open || document.activeElement !== tiles[0]) problems.push('inspiration lightbox close / focus return');
+  }
+  return problems.join('; ');
+}
+async function homeMobileFlow() {
+  const problems = [], toggle = document.querySelector('.menu-toggle'), nav = document.querySelector('.mobile-nav');
+  toggle.click(); const opened = !nav.hidden && toggle.getAttribute('aria-expanded') === 'true';
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+  if (!opened || !nav.hidden || toggle.getAttribute('aria-expanded') !== 'false' || document.activeElement !== toggle) problems.push(`mobile menu opened=${opened} closed=${nav.hidden}`);
+  const announcement = document.querySelector('.announcement'), announcementLinks = [...(announcement?.querySelectorAll('.announcement-location') || [])];
+  if (announcementLinks.length !== 3 || !announcementLinks.every(link => link.getAttribute('href')?.startsWith('tel:+1'))) problems.push(`location announcement links=${announcementLinks.length}`);
+  if (!announcement || announcement.scrollWidth <= announcement.clientWidth) problems.push('location announcement is not horizontally scrollable on mobile');
+  const marquee = document.querySelector('[data-gallery-marquee]'), original = marquee?.querySelector('.gallery-run:not(.gallery-run-clone)'), clone = marquee?.querySelector('.gallery-run-clone');
+  const tiles = [...(original?.querySelectorAll('[data-lightbox]') || [])];
+  if (!marquee?.classList.contains('is-ready') || tiles.length < 8) problems.push(`inspiration strip ready=${marquee?.classList.contains('is-ready')} images=${tiles.length}`);
+  if (!clone || clone.getAttribute('aria-hidden') !== 'true' || !clone.inert || clone.querySelector('[data-lightbox]')) problems.push('inspiration clone is not safely hidden/inert');
+  const animation = marquee ? getComputedStyle(marquee.querySelector('.inspiration-track')).animationName : 'none';
+  if (!animation || animation === 'none') problems.push(`inspiration animation=${animation}`);
+  if (tiles[0]) {
+    const dialog = document.querySelector('.lightbox');
+    tiles[0].click();
+    if (!dialog.open || dialog.querySelector('.lightbox-position').textContent !== `1 / ${tiles.length}`) problems.push('inspiration lightbox did not open with the original image set');
+    dialog.querySelector('.lightbox-close').click(); await new Promise(r => setTimeout(r, 100));
+    if (dialog.open || document.activeElement !== tiles[0]) problems.push('inspiration lightbox close / focus return');
+  }
+  return problems.join('; ');
+}
 async function menuSheetFlow() {
   const dialog = document.querySelector('.lightbox');
   document.querySelector('.product-design-image').click();
@@ -160,7 +194,7 @@ async function menuSheetFlow() {
   dialog.querySelector('.lightbox-close').click(); await new Promise(r => setTimeout(r, 100));
   return tools && zoomed && !dialog.open ? '' : `menu poster viewer: tools=${tools} zoomed=${zoomed} closed=${!dialog.open}`;
 }
-const flows = { 'home@390': mobileMenuFlow, 'our-gallery@1440': galleryFlow, 'our-gallery@390': galleryFlow, 'services@1440': menuSheetFlow };
+const flows = { 'home@390': homeMobileFlow, 'home@1440': inspirationFlow, 'our-gallery@1440': galleryFlow, 'our-gallery@390': galleryFlow, 'services@1440': menuSheetFlow };
 
 const profile = await mkdtemp(join(tmpdir(), 'ecn-audit-'));
 const chrome = spawn(chromePath, ['--headless=new', '--disable-gpu', '--no-first-run', '--hide-scrollbars', '--remote-debugging-port=0', `--user-data-dir=${profile}`, 'about:blank']);

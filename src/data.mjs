@@ -1,5 +1,4 @@
 export const origin = 'https://www.ecstarnailsandspagreenvillenc.com';
-export const email = '[email removed]';
 export const navigation = [['home', 'Home'], ['services', 'Services'], ['our-gallery', 'Our Gallery'], ['about', 'About'], ['contact', 'Contact']];
 export const locations = [
   { id: 'fire-tower', name: 'Fire Tower Road', city: 'Greenville', address: '1885 E Fire Tower Rd #110, Greenville, NC 27858', phone: '252-321-6877', image: '/images/original/contact-01.jpg', street: '1885 E Fire Tower Rd #110', postal: '27858' },
@@ -11,7 +10,7 @@ export const introduction = [
   'We believe that you are your best accessory. This is why we offer a full-service experience, including luxurious manicure and pedicure services, professional waxing, and more, to help you look and feel your absolute best!'
 ];
 export const serviceCategories = [
-  { id: 'manicure', name: 'Manicure & nail artistry', number: '01', image: '/images/original/our-gallery-19.jpg', description: 'From a beautifully simple manicure to a look that is entirely your own. Explore natural nails, gel, dipping powder, and enhancements.', label: 'Manicure Services' },
+  { id: 'manicure', name: 'Manicure & nail artistry', number: '01', image: '/images/original/our-gallery-17.jpg', description: 'From a beautifully simple manicure to a look that is entirely your own. Explore natural nails, gel, dipping powder, and enhancements.', label: 'Manicure Services' },
   { id: 'pedicure', name: 'Pedicure rituals', number: '02', image: '/images/original/home-02.jpg', description: 'Settle in, slow down, and let us take care of you. Discover our collection of spa pedicures, from Delux to our EC Spa experience.', label: 'Pedicure Services' },
   { id: 'waxing', name: 'Waxing & finishing touches', number: '03', image: '/images/original/home-03.jpg', description: 'The little details that make you feel your best. Discover our professional face and body waxing services.', label: 'Waxing Services' }
 ];

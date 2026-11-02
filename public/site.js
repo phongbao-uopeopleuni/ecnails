@@ -69,6 +69,24 @@ tiles.forEach(tile => tile.addEventListener('click', () => {
   document.body.classList.add('lightbox-open');
   dialog.querySelector('.lightbox-close').focus();
 }));
+
+const marquee = document.querySelector('[data-gallery-marquee]');
+const marqueeTrack = marquee?.querySelector('.inspiration-track');
+const originalRun = marqueeTrack?.querySelector('.gallery-run');
+if (marquee && marqueeTrack && originalRun) {
+  const duplicateRun = originalRun.cloneNode(true);
+  duplicateRun.classList.add('gallery-run-clone');
+  duplicateRun.setAttribute('aria-hidden', 'true');
+  duplicateRun.inert = true;
+  duplicateRun.querySelectorAll('button, a').forEach(control => {
+    control.tabIndex = -1;
+    control.removeAttribute('data-lightbox');
+  });
+  duplicateRun.querySelectorAll('img').forEach(image => image.alt = '');
+  marqueeTrack.append(duplicateRun);
+  requestAnimationFrame(() => marquee.classList.add('is-ready'));
+}
+
 dialog?.querySelector('.lightbox-close').addEventListener('click', () => dialog.close());
 dialog?.querySelector('.lightbox-prev').addEventListener('click', () => showImage(selected - 1));
 dialog?.querySelector('.lightbox-next').addEventListener('click', () => showImage(selected + 1));
