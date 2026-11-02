@@ -35,4 +35,57 @@
 .lightbox.is-zoomed>.lightbox-close,.lightbox.is-zoomed>.lightbox-prev,.lightbox.is-zoomed>.lightbox-next{position:fixed;z-index:3;background:var(--night)}
 .lightbox.is-zoomed .lightbox-position{position:fixed;z-index:2;left:50%;right:auto;transform:translateX(-50%);padding:5px 12px;background:var(--night)}
 @media(max-width:700px){.lightbox-tools{left:12px;right:60px;top:15px;transform:none;max-width:none;justify-content:center;gap:7px;padding:3px}.lightbox-tools button,.lightbox-tools a{min-height:36px;padding:7px 9px;font-size:10px}.lightbox.is-zoomed[open]{padding:70px 45px 100px}}
+.desktop-nav a{font-size:16px}
+.mobile-nav a{font-size:30px}
+.footer-links a{font-size:14px}
+.service-jumps a{display:inline-flex;align-items:center;min-height:44px;font-size:12px}
+.menu-section table{font-size:16px}
+.menu-section thead th{font-size:12px;letter-spacing:1px}
+.menu-section td{font-size:18px;font-weight:600}
+.menu-section tbody th,.menu-section tbody td{padding-top:17px;padding-bottom:17px}
+.menu-group-heading p,.menu-description,.menu-aside>p:not(.eyebrow){font-size:14px;line-height:1.8}
+.salon-cta{padding-top:38px;padding-bottom:55px;border-bottom:1px solid var(--line);scroll-margin-top:120px}
+.salon-cta h2{font-size:42px}
+.salon-cta .section-heading{margin-bottom:28px}
+.salon-cta-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.salon-cta-card{display:flex;flex-direction:column;min-width:0;padding:25px;border:1px solid var(--line);background:var(--mist)}
+.salon-cta-card h3{font-size:29px;line-height:1.2;margin:10px 0 15px}
+.salon-cta-card address{flex:1;min-height:52px;font-size:14px;line-height:1.8;font-style:normal;color:var(--muted)}
+.salon-cta-phone{display:inline-flex;align-self:flex-start;min-height:32px;margin-top:12px;font-size:16px;font-weight:500}
+.salon-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:20px}
+.salon-actions a{display:flex;align-items:center;justify-content:center;gap:8px;min-width:0;min-height:48px;max-width:none;padding:12px 10px;border:1px solid var(--plum-deep);font-size:14px;font-weight:500;line-height:1.3;text-align:center;transition:background .2s,color .2s}
+.salon-actions a.salon-call{background:var(--plum-deep);color:var(--paper)}
+.salon-actions a.salon-call:hover{background:var(--plum-hover)}
+.salon-actions a.salon-directions{background:transparent;color:var(--ink)}
+.salon-actions a.salon-directions:hover{background:var(--lilac)}
+.salon-actions svg{width:18px;height:18px}
+.location-actions.salon-actions{margin-top:24px;padding-top:20px;padding-bottom:20px}
+.site-footer .salon-actions a{font-size:14px;color:var(--on-night);border-color:var(--on-night-muted)}
+.site-footer .salon-actions a.salon-call{background:var(--champagne);color:var(--night);border-color:var(--champagne)}
+.site-footer .salon-actions a.salon-call:hover{background:var(--on-night);border-color:var(--on-night)}
+.site-footer .salon-actions a.salon-directions:hover{background:var(--plum-deep)}
+@media(min-width:701px) and (max-width:1100px){.salon-actions{grid-template-columns:1fr}.salon-cta-grid{gap:16px}.salon-cta-card{padding:20px}.salon-cta-card h3{font-size:27px}}
+@media(max-width:700px){.salon-cta{padding-top:24px;padding-bottom:40px;scroll-margin-top:95px}.salon-cta h2{font-size:36px}.salon-cta-grid{grid-template-columns:1fr;gap:18px}.salon-cta-card{padding:22px}.salon-cta-card address{min-height:0}.salon-actions a{min-height:48px}.menu-section thead th{font-size:12px;letter-spacing:.5px}.menu-group-heading h2{font-size:34px}}
+@media(max-width:400px){.salon-actions{grid-template-columns:1fr}}
+/* Type scale (2026-11-02): reading sizes for body copy, contact details, buttons and labels. Declared last with a
+   :root prefix so they override the older per-breakpoint font sizes above. Paragraphs 16px, contact details
+   14-17px, buttons 14px, labels 12px (11px only where noted). Headings, logo, menu and price table keep their own sizes. */
+:root .hero-description,:root .service-card>p,:root .about-copy>p:not(.eyebrow),:root .section-heading>p,:root .story-copy p:not(.eyebrow):not(.signature),:root .invitation-inner>p:not(.eyebrow),:root .page-hero>p:last-of-type,:root .footer-brand>p,:root .menu-aside>p:not(.eyebrow){font-size:16px;line-height:1.75}
+:root .menu-group-heading p,:root .menu-description{font-size:15px}
+:root .location-content address,:root .salon-cta-card address,:root .contact-email>a,:root .contact-email>p:last-child{font-size:15px;line-height:1.7}
+:root .contact-hours span{font-size:14px}
+:root .contact-hours strong{font-size:17px}
+:root .hours-strip p,:root .footer-hours>p:not(.eyebrow),:root .footer-hours>a,:root .footer-locations a{font-size:14px}
+:root .hours-strip strong{font-size:15px}
+:root .button,:root .text-link,:root .hero-actions .button,:root .hero-actions .text-link,:root .product-design-open,:root .service-jumps a,:root .gallery-filters button{font-size:14px}
+:root .header-visit{font-size:13px}
+:root .eyebrow{font-size:12px;letter-spacing:1.8px}
+:root .announcement,:root .announcement a{font-size:13px}
+:root .photo-label,:root .hero-index,:root .hero-footnote,:root .photo-note,:root .service-title>span,:root .location-image>span,:root .story-photo-label,:root .gallery-caption,:root .menu-number,:root .product-design-heading>span,:root .gallery-filters span,:root .footer-bottom{font-size:12px}
+:root .gallery-count{font-size:13px}
+@media(max-width:1200px){:root .gallery-caption{display:none}}
+@media(max-width:1000px){:root .location-content>.eyebrow,:root .footer-locations .eyebrow{font-size:11px;letter-spacing:1.2px}}
+@media(max-width:700px){:root .contact-hours strong{font-size:15px;white-space:nowrap}:root .header-visit{font-size:12px;white-space:nowrap}:root .hero-actions{flex-wrap:wrap;gap:14px 24px}}
+@media(max-width:420px){:root .contact-hours{flex-direction:column;gap:14px}}
+@media(max-width:370px){:root .footer-hours>p:not(.eyebrow){font-size:13px}:root .footer-hours>p span{white-space:nowrap}:root .eyebrow{letter-spacing:1.2px}:root .photo-label{font-size:11px;letter-spacing:.4px}:root .photo-label span:last-child{display:none}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}

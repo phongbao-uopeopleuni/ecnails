@@ -97,7 +97,7 @@ async function pageAudit() {
     const cs = getComputedStyle(el), r = el.getBoundingClientRect(), size = parseFloat(cs.fontSize);
     if (r.right > vw + 1 || r.left < -1) errors.push(`off-screen text ${name(el)}`);
     if (/hidden|clip/.test(cs.overflowX) && el.scrollWidth > el.clientWidth + 1) errors.push(`clipped text ${name(el)}`);
-    if (size < 10 && !el.closest('.brand-sub')) errors.push(`text under 10px ${name(el)} (${size}px)`);
+    if (size < 11 && !el.closest('.brand-sub')) errors.push(`text under 11px ${name(el)} (${size}px)`);
     const bg = solidBackground(el);
     if (bg) { const v = ratio(mix(rgba(cs.color), bg), bg); if (v < needs(cs)) errors.push(`contrast ${v.toFixed(2)}:1 ${name(el)}`); }
     else if (!measured.has(el)) unmeasured.add(name(el));

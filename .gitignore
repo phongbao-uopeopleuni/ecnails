@@ -7,3 +7,5 @@ migration/*.html
 migration/*screenshot*
 migration/contact-sheet.jpg
 verification/
+
+.vercel
