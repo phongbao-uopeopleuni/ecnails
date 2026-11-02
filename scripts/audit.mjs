@@ -97,7 +97,15 @@ async function pageAudit() {
     if (bg) { const v = ratio(mix(rgba(cs.color), bg), bg); if (v < needs(cs)) errors.push(`contrast ${v.toFixed(2)}:1 ${name(el)}`); }
     else if (!measured.has(el)) unmeasured.add(name(el));
   }
-  const hit = (a, b) => { const p = a.getBoundingClientRect(), q = b.getBoundingClientRect(); return p.left < q.right - 1 && q.left < p.right - 1 && p.top < q.bottom - 1 && q.top < p.bottom - 1; };
+  // One-line boxes must fit their text: overflow stays visible, so it would spill onto the next item (announcement bar, 1024px).
+  // Measure the text itself (Range), since centred text overflows both sides and scrollWidth misses the left side.
+  for (const el of document.querySelectorAll('body *')) {
+    if (!visible(el) || el.clientWidth === 0 || getComputedStyle(el).whiteSpace !== 'nowrap' || el.closest('[data-gallery-marquee]')) continue;
+    const range = document.createRange(); range.selectNodeContents(el);
+    const t = range.getBoundingClientRect(), b = el.getBoundingClientRect(), spill = Math.max(b.left - t.left, t.right - b.right);
+    if (t.width && spill > 1) errors.push(`text overflows its box ${name(el)} (${Math.round(spill)}px)`);
+  }
+  const hit =(a, b) => { const p = a.getBoundingClientRect(), q = b.getBoundingClientRect(); return p.left < q.right - 1 && q.left < p.right - 1 && p.top < q.bottom - 1 && q.top < p.bottom - 1; };
   for (const box of document.querySelectorAll('.header-inner,.brand,.photo-label,.hero-index,.hero-actions,.location-actions,.hours-strip,.footer-signature,.footer-nav,.footer-bottom,.contact-hours,.gallery-toolbar,.story-photo-label,.product-design-heading,.menu-group-heading,.service-title,.announcement')) {
     const kids = [...box.children].filter(visible);
     kids.forEach((a, i) => kids.slice(i + 1).forEach(b => { if (hit(a, b)) errors.push(`overlap in ${name(box)}: ${name(a)} × ${name(b)}`); }));
