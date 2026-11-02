@@ -1,0 +1,9 @@
+dist/
+.vercel/
+node_modules/
+.env*
+!.env.example
+migration/*.html
+migration/*screenshot*
+migration/contact-sheet.jpg
+verification/

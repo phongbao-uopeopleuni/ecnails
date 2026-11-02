@@ -1,0 +1,216 @@
+[
+  {
+    "name": "ecstarnailsandspagreenvillenc.com",
+    "type": "A",
+    "status": 0,
+    "answers": [
+      {
+        "name": "ecstarnailsandspagreenvillenc.com.",
+        "type": 1,
+        "TTL": 14400,
+        "data": "216.239.32.21"
+      },
+      {
+        "name": "ecstarnailsandspagreenvillenc.com.",
+        "type": 1,
+        "TTL": 14400,
+        "data": "216.239.34.21"
+      },
+      {
+        "name": "ecstarnailsandspagreenvillenc.com.",
+        "type": 1,
+        "TTL": 14400,
+        "data": "216.239.36.21"
+      },
+      {
+        "name": "ecstarnailsandspagreenvillenc.com.",
+        "type": 1,
+        "TTL": 14400,
+        "data": "216.239.38.21"
+      }
+    ]
+  },
+  {
+    "name": "ecstarnailsandspagreenvillenc.com",
+    "type": "AAAA",
+    "status": 0,
+    "answers": []
+  },
+  {
+    "name": "ecstarnailsandspagreenvillenc.com",
+    "type": "CNAME",
+    "status": 0,
+    "answers": []
+  },
+  {
+    "name": "ecstarnailsandspagreenvillenc.com",
+    "type": "MX",
+    "status": 0,
+    "answers": [
+      {
+        "name": "ecstarnailsandspagreenvillenc.com.",
+        "type": 15,
+        "TTL": 14400,
+        "data": "10 alt4.aspmx.l.google.com."
+      },
+      {
+        "name": "ecstarnailsandspagreenvillenc.com.",
+        "type": 15,
+        "TTL": 14400,
+        "data": "5 alt1.aspmx.l.google.com."
+      },
+      {
+        "name": "ecstarnailsandspagreenvillenc.com.",
+        "type": 15,
+        "TTL": 14400,
+        "data": "10 alt3.aspmx.l.google.com."
+      },
+      {
+        "name": "ecstarnailsandspagreenvillenc.com.",
+        "type": 15,
+        "TTL": 14400,
+        "data": "1 aspmx.l.google.com."
+      },
+      {
+        "name": "ecstarnailsandspagreenvillenc.com.",
+        "type": 15,
+        "TTL": 14400,
+        "data": "5 alt2.aspmx.l.google.com."
+      }
+    ]
+  },
+  {
+    "name": "ecstarnailsandspagreenvillenc.com",
+    "type": "TXT",
+    "status": 0,
+    "answers": [
+      {
+        "name": "ecstarnailsandspagreenvillenc.com.",
+        "type": 16,
+        "TTL": 14400,
+        "data": "v=spf1 include:_spf.google.com ~all"
+      }
+    ]
+  },
+  {
+    "name": "ecstarnailsandspagreenvillenc.com",
+    "type": "NS",
+    "status": 0,
+    "answers": [
+      {
+        "name": "ecstarnailsandspagreenvillenc.com.",
+        "type": 2,
+        "TTL": 21600,
+        "data": "ns-cloud-e2.googledomains.com."
+      },
+      {
+        "name": "ecstarnailsandspagreenvillenc.com.",
+        "type": 2,
+        "TTL": 21600,
+        "data": "ns-cloud-e4.googledomains.com."
+      },
+      {
+        "name": "ecstarnailsandspagreenvillenc.com.",
+        "type": 2,
+        "TTL": 21600,
+        "data": "ns-cloud-e3.googledomains.com."
+      },
+      {
+        "name": "ecstarnailsandspagreenvillenc.com.",
+        "type": 2,
+        "TTL": 21600,
+        "data": "ns-cloud-e1.googledomains.com."
+      }
+    ]
+  },
+  {
+    "name": "www.ecstarnailsandspagreenvillenc.com",
+    "type": "A",
+    "status": 0,
+    "answers": [
+      {
+        "name": "www.ecstarnailsandspagreenvillenc.com.",
+        "type": 5,
+        "TTL": 14400,
+        "data": "ghs.googlehosted.com."
+      },
+      {
+        "name": "ghs.googlehosted.com.",
+        "type": 1,
+        "TTL": 300,
+        "data": "108.177.97.121"
+      }
+    ]
+  },
+  {
+    "name": "www.ecstarnailsandspagreenvillenc.com",
+    "type": "AAAA",
+    "status": 0,
+    "answers": [
+      {
+        "name": "www.ecstarnailsandspagreenvillenc.com.",
+        "type": 5,
+        "TTL": 14397,
+        "data": "ghs.googlehosted.com."
+      },
+      {
+        "name": "ghs.googlehosted.com.",
+        "type": 28,
+        "TTL": 300,
+        "data": "2404:6800:4008:c00::79"
+      }
+    ]
+  },
+  {
+    "name": "www.ecstarnailsandspagreenvillenc.com",
+    "type": "CNAME",
+    "status": 0,
+    "answers": [
+      {
+        "name": "www.ecstarnailsandspagreenvillenc.com.",
+        "type": 5,
+        "TTL": 14396,
+        "data": "ghs.googlehosted.com."
+      }
+    ]
+  },
+  {
+    "name": "www.ecstarnailsandspagreenvillenc.com",
+    "type": "MX",
+    "status": 0,
+    "answers": [
+      {
+        "name": "www.ecstarnailsandspagreenvillenc.com.",
+        "type": 5,
+        "TTL": 14400,
+        "data": "ghs.googlehosted.com."
+      }
+    ]
+  },
+  {
+    "name": "www.ecstarnailsandspagreenvillenc.com",
+    "type": "TXT",
+    "status": 0,
+    "answers": [
+      {
+        "name": "www.ecstarnailsandspagreenvillenc.com.",
+        "type": 5,
+        "TTL": 14396,
+        "data": "ghs.googlehosted.com."
+      }
+    ]
+  },
+  {
+    "name": "www.ecstarnailsandspagreenvillenc.com",
+    "type": "NS",
+    "status": 0,
+    "answers": [
+      {
+        "name": "www.ecstarnailsandspagreenvillenc.com.",
+        "type": 5,
+        "TTL": 14400,
+        "data": "ghs.googlehosted.com."
+      }
+    ]
+  }
+]
