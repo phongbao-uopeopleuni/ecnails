@@ -28,11 +28,13 @@ for (const [path, html] of Object.entries(pages)) {
     assert.ok(salon, `${path}: original location in structured data`);
     assert.equal(salon.telephone, `+1-${location.phone}`, `${path}: original phone`);
     assert.deepEqual(salon.address, { '@type': 'PostalAddress', streetAddress: location.street, addressLocality: location.city, addressRegion: 'NC', postalCode: location.postal, addressCountry: 'US' }, `${path}: exact original address`);
-    if (path !== 'our-gallery') {
-      assert.ok(decode(html).includes(location.address), `${path}: visible original address`);
-      assert.ok(html.includes(location.phone), `${path}: visible original phone`);
-    }
+    assert.ok(decode(html).includes(location.address), `${path}: visible original address`);
+    assert.ok(html.includes(location.phone), `${path}: visible original phone`);
   }
+  // Every page ends with the same three-location section right above the shared footer (approved 2026-11-03).
+  const mainEnd = html.indexOf('</main>'), lastVisit = html.lastIndexOf('<section class="visit-section', mainEnd);
+  assert.ok(lastVisit !== -1 && !html.slice(lastVisit + 1, mainEnd).includes('<section'), `${path}: page ends with the three-location section`);
+  assert.doesNotMatch(html, /class="cta-band"/, `${path}: no dark CTA band above the footer`);
   for (const match of html.matchAll(/(?:href|src|data-lightbox)="([^"]+)"/g)) {
     const href = decode(match[1]);
     if (!href.startsWith('/') && !href.startsWith('#')) continue;
@@ -112,6 +114,7 @@ for (const [path, html] of Object.entries({ ...pages, '404': error })) {
   assert.doesNotMatch(footerOf(html), /footer-place|Three salons in/, `${path}: no "Three salons in…" line in footer (removed 2026-11-03)`);
 }
 // The GitHub repo is public (2026-11-03): customer files stay out of Git and no salon email address sits in tracked sources.
-assert.match(await readFile(resolve(root, '.gitignore'), 'utf8'), /^pictures\/\r?$/m, '.gitignore keeps pictures/ out of Git');
+const gitignore = await readFile(resolve(root, '.gitignore'), 'utf8');
+for (const rule of ['pictures/', '*.md', '!README.md', 'docs/']) assert.ok(gitignore.split(/\r?\n/).includes(rule), `.gitignore keeps "${rule}" rule (customer files and internal notes stay local)`);
 for (const file of ['src/legacy.json', 'src/data.mjs', 'migration/contact.json']) assert.doesNotMatch(await readFile(resolve(root, file), 'utf8'), /[\w.+-]+@ecstarnailsandspagreenvillenc\.com/i, `${file}: no salon email address`);
-console.log(`PASS: 5 preserved routes; ${links} internal links; ${assets.size} referenced assets; exact addresses, phones, hours, home/about copy; keyword H1 and snippet-length title/description on 5 pages; 23 gallery photos; moving Home inspiration strip; Home reviews (${reviews.length} shown word for word, Google links for 3 salons, no self-served stars); no gallery captions or hero index; 8 original menu sheets; legacy heading anchors; shared three-location announcement; shared footer across 6 templates without hours; no public email (site or sources); pictures/ kept out of Git; Vercel clean URLs and 404.`);
+console.log(`PASS: 5 preserved routes; ${links} internal links; ${assets.size} referenced assets; exact addresses, phones, hours, home/about copy; keyword H1 and snippet-length title/description on 5 pages; 23 gallery photos; moving Home inspiration strip; Home reviews (${reviews.length} shown word for word, Google links for 3 salons, no self-served stars); no gallery captions or hero index; 8 original menu sheets; legacy heading anchors; shared three-location announcement; shared footer across 6 templates without hours; every page ends with the three-location section; no public email (site or sources); pictures/ and internal notes kept out of Git; Vercel clean URLs and 404.`);
