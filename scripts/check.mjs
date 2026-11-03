@@ -109,5 +109,6 @@ for (const [path, html] of Object.entries({ ...pages, '404': error })) {
   assert.doesNotMatch(announcementOf(html), /A little time for yourself|A beautiful feeling|Greenville & Washington, NC/i, `${path}: old announcement removed`);
   assert.doesNotMatch(footerOf(html), /footer-locations|footer-phone|data-cta=|href="tel:|maps\/dir\//, `${path}: no duplicate location block in footer`);
   assert.doesNotMatch(footerOf(html), /footer-hours|Open hours|Monday|Sunday|10:00 AM|08:00 PM|01:00 PM|06:00 PM/i, `${path}: no opening hours in footer`);
+  assert.doesNotMatch(footerOf(html), /footer-place|Three salons in/, `${path}: no "Three salons in…" line in footer (removed 2026-11-03)`);
 }
 console.log(`PASS: 5 preserved routes; ${links} internal links; ${assets.size} referenced assets; exact addresses, phones, hours, home/about copy; keyword H1 and snippet-length title/description on 5 pages; 23 gallery photos; moving Home inspiration strip; Home reviews (${reviews.length} shown word for word, Google links for 3 salons, no self-served stars); no gallery captions or hero index; 8 original menu sheets; legacy heading anchors; shared three-location announcement; shared footer across 6 templates without hours; no public email; Vercel clean URLs and 404.`);

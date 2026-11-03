@@ -42,7 +42,7 @@ function header(page) {
 }
 function footer() {
   const legacyLocations = ['h.cm7d2p78gatg', 'h.ccwucn3dnk6k', 'h.cbymgpyv2biw'].map(alias).join('');
-  return `<footer class="site-footer"><div class="footer-signature wrap"><a href="/home" class="brand">${logo}</a><p class="footer-tagline">Your local escape for beauty, tranquility, and a little time for you.</p><nav class="footer-nav" aria-label="Footer navigation">${navigation.map(([slug, label]) => `<a href="/${slug}">${label}</a>`).join('')}</nav><div class="footer-ornament" aria-hidden="true"><span></span>${star}<span></span></div><p class="footer-place">Three salons in Greenville &amp; Washington, North Carolina</p></div>${legacyLocations}<div class="footer-bottom wrap"><span>© ${new Date().getFullYear()} EC Star Nails & Spa. All rights reserved.</span><a href="#top">Back to top ↑</a></div></footer>`;
+  return `<footer class="site-footer"><div class="footer-signature wrap"><a href="/home" class="brand">${logo}</a><p class="footer-tagline">Your local escape for beauty, tranquility, and a little time for you.</p><nav class="footer-nav" aria-label="Footer navigation">${navigation.map(([slug, label]) => `<a href="/${slug}">${label}</a>`).join('')}</nav><div class="footer-ornament" aria-hidden="true"><span></span>${star}<span></span></div></div>${legacyLocations}<div class="footer-bottom wrap"><span>© ${new Date().getFullYear()} EC Star Nails & Spa. All rights reserved.</span><a href="#top">Back to top ↑</a></div></footer>`;
 }
 
 function locationCards() {
