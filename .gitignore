@@ -7,5 +7,7 @@ migration/*.html
 migration/*screenshot*
 migration/contact-sheet.jpg
 verification/
+# Customer photos and documents stay on this machine: the GitHub repo is public (2026-11-03).
+pictures/
 
 .vercel
