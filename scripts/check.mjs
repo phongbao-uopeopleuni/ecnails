@@ -12,6 +12,11 @@ let links = 0, assets = new Set();
 for (const [path, html] of Object.entries(pages)) {
   assert.equal((html.match(/<h1\b/g) || []).length, 1, `${path}: one main heading`);
   assert.ok(html.includes(`<link rel="canonical" href="${origin}/${path}">`), `${path}: original canonical URL`);
+  // Search keywords approved 2026-11-03: the H1 opens with a keyword eyebrow; title and description fit a search snippet.
+  assert.match(html, /<h1><span class="eyebrow">/, `${path}: keyword eyebrow opens the H1`);
+  const title = decode(html.match(/<title>([^<]*)<\/title>/)[1]), description = decode(html.match(/<meta name="description" content="([^"]*)"/)[1]);
+  assert.ok(title.length <= 63 && title.includes('EC Star Nails & Spa') && title.includes('Greenville'), `${path}: title ≤ 63 characters naming the salon and Greenville`);
+  assert.ok(description.length >= 120 && description.length <= 160 && description.includes('Greenville'), `${path}: description 120–160 characters naming Greenville`);
   const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(m => m[1]);
   assert.equal(ids.length, new Set(ids).size, `${path}: duplicate HTML IDs`);
   const schema = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
@@ -105,4 +110,4 @@ for (const [path, html] of Object.entries({ ...pages, '404': error })) {
   assert.doesNotMatch(footerOf(html), /footer-locations|footer-phone|data-cta=|href="tel:|maps\/dir\//, `${path}: no duplicate location block in footer`);
   assert.doesNotMatch(footerOf(html), /footer-hours|Open hours|Monday|Sunday|10:00 AM|08:00 PM|01:00 PM|06:00 PM/i, `${path}: no opening hours in footer`);
 }
-console.log(`PASS: 5 preserved routes; ${links} internal links; ${assets.size} referenced assets; exact addresses, phones, hours, home/about copy; 23 gallery photos; moving Home inspiration strip; Home reviews (${reviews.length} shown word for word, Google links for 3 salons, no self-served stars); no gallery captions or hero index; 8 original menu sheets; legacy heading anchors; shared three-location announcement; shared footer across 6 templates without hours; no public email; Vercel clean URLs and 404.`);
+console.log(`PASS: 5 preserved routes; ${links} internal links; ${assets.size} referenced assets; exact addresses, phones, hours, home/about copy; keyword H1 and snippet-length title/description on 5 pages; 23 gallery photos; moving Home inspiration strip; Home reviews (${reviews.length} shown word for word, Google links for 3 salons, no self-served stars); no gallery captions or hero index; 8 original menu sheets; legacy heading anchors; shared three-location announcement; shared footer across 6 templates without hours; no public email; Vercel clean URLs and 404.`);
