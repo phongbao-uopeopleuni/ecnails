@@ -66,18 +66,18 @@
 /* Type scale (2026-11-02): reading sizes for body copy, contact details, buttons and labels. Declared last with a
    :root prefix so they override the older per-breakpoint font sizes above. Paragraphs 16px, contact details
    14-17px, buttons 14px, labels 12px (11px only where noted). Headings, logo, menu and price table keep their own sizes. */
-:root .hero-description,:root .service-card>p,:root .about-copy>p:not(.eyebrow),:root .section-heading>p,:root .story-copy p:not(.eyebrow):not(.signature),:root .invitation-inner>p:not(.eyebrow),:root .page-hero>p:last-of-type,:root .footer-tagline,:root .menu-aside>p:not(.eyebrow){font-size:16px;line-height:1.75}
+:root .hero-description,:root .service-card>p,:root .about-copy>p:not(.eyebrow),:root .section-heading>p,:root .story-copy p:not(.eyebrow):not(.signature),:root .invitation-inner>p:not(.eyebrow),:root .page-hero>p:last-of-type,:root .footer-tagline,:root .review-card blockquote p,:root .menu-aside>p:not(.eyebrow){font-size:16px;line-height:1.75}
 :root .menu-group-heading p,:root .menu-description{font-size:15px}
 :root .location-content address,:root .salon-cta-card address,:root .contact-note{font-size:15px;line-height:1.7}
 :root .contact-hours span{font-size:14px}
 :root .contact-hours strong{font-size:17px}
 :root .hours-strip p{font-size:14px}
-:root .hours-strip strong{font-size:15px}
-:root .button,:root .text-link,:root .hero-actions .button,:root .hero-actions .text-link,:root .product-design-open,:root .service-jumps a,:root .gallery-filters button{font-size:14px}
+:root .hours-strip strong,:root .review-card figcaption strong,:root .review-stars{font-size:15px}
+:root .button,:root .text-link,:root .hero-actions .button,:root .hero-actions .text-link,:root .product-design-open,:root .service-jumps a,:root .gallery-filters button,:root .review-more,:root .review-source-links a{font-size:14px}
 :root .header-visit,:root .footer-nav a{font-size:13px}
 :root .eyebrow{font-size:12px;letter-spacing:1.8px}
 :root .announcement,:root .announcement a{font-size:13px}
-:root .photo-label,:root .hero-footnote,:root .photo-note,:root .service-title>span,:root .location-image>span,:root .story-photo-label,:root .menu-number,:root .product-design-heading>span,:root .gallery-filters span,:root .footer-bottom,:root .footer-place{font-size:12px}
+:root .photo-label,:root .hero-footnote,:root .photo-note,:root .service-title>span,:root .location-image>span,:root .story-photo-label,:root .menu-number,:root .product-design-heading>span,:root .gallery-filters span,:root .footer-bottom,:root .footer-place,:root .review-card figcaption span,:root .review-sources-title{font-size:12px}
 :root .gallery-count{font-size:13px}
 @media(max-width:1000px){:root .location-content>.eyebrow{font-size:11px;letter-spacing:1.2px}:root .announcement,:root .announcement a{font-size:12px}}
 @media(max-width:700px){:root .contact-hours strong{font-size:15px;white-space:nowrap}:root .header-visit{font-size:12px;white-space:nowrap}:root .hero-actions{flex-wrap:wrap;gap:14px 24px}}
@@ -112,3 +112,27 @@
 @media(min-width:1001px) and (max-width:1320px){.announcement{padding-inline:40px}.announcement a{flex-direction:column;gap:1px;padding:6px 10px;line-height:1.35}}
 @media(max-width:1000px){.announcement{padding-inline:0;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}.announcement-inner{display:flex;width:max-content;max-width:none}.announcement a{width:100vw;min-width:100vw;padding-inline:18px;scroll-snap-align:start}.announcement-location+.announcement-location{border-left:0}}
 @media(max-width:370px){.announcement a{padding-inline:12px}}
+
+/* Home reviews: owner-selected five-star Google reviews (reviews in src/data.mjs) and each salon's Google review links.
+   Font sizes live in the Type scale block. Without JavaScript every card stays visible. */
+.review-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.review-card{position:relative;display:flex;flex-direction:column;gap:14px;margin:0;padding:38px 32px 28px;background:var(--mist)}
+.review-card::before{content:'“';content:'“'/'';position:absolute;top:14px;right:26px;font-family:var(--serif);font-size:72px;line-height:1;color:var(--lilac)}
+.review-stars{letter-spacing:3px;color:var(--gold)}
+.review-card blockquote{flex:1;margin:0}
+.review-card blockquote p{color:var(--ink)}
+.review-card figcaption{display:flex;flex-direction:column;gap:4px;padding-top:16px;border-top:1px solid var(--line)}
+.review-card figcaption strong{font-weight:600;color:var(--ink)}
+.review-card figcaption span{letter-spacing:.4px;color:var(--muted)}
+.review-more{display:flex;width:max-content;margin:36px auto 0;padding:0 0 3px;border:0;border-bottom:1px solid var(--ink);background:none;font:inherit;color:var(--ink);cursor:pointer}
+.review-more[hidden]{display:none}
+.reviews-section.is-collapsible:not(.is-open) .review-card:nth-child(n+7){display:none}
+.review-sources{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 24px;margin-top:56px;padding-top:36px;border-top:1px solid var(--line)}
+.section-heading+.review-sources{margin-top:0;padding-top:0;border-top:0}
+.review-sources-title{grid-column:1/-1;letter-spacing:1.8px;text-transform:uppercase;color:var(--gold)}
+.review-source h3{margin:6px 0 4px;font-family:var(--serif);font-size:26px;font-weight:500;color:var(--ink)}
+.review-source-links{display:flex;flex-wrap:wrap;gap:0 24px}
+.review-source-links a{display:inline-flex;align-items:center;gap:6px;min-height:44px;color:var(--plum);text-decoration:underline;text-underline-offset:4px}
+.review-source-links a:hover{color:var(--plum-hover)}
+@media(max-width:1000px){.review-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.reviews-section.is-collapsible:not(.is-open) .review-card:nth-child(n+5){display:none}.review-sources{grid-template-columns:1fr}}
+@media(max-width:700px){.review-grid{grid-template-columns:1fr;gap:16px}.review-card{padding:34px 22px 24px}.reviews-section.is-collapsible:not(.is-open) .review-card:nth-child(n+4){display:none}.review-more{margin-top:28px}.review-sources{margin-top:44px;padding-top:28px}}

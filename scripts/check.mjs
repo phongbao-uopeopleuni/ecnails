@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile, access } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { origin, locations, introduction, menuSheets, gallery } from '../src/data.mjs';
+import { origin, locations, introduction, menuSheets, gallery, reviews, reviewLinks } from '../src/data.mjs';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const paths = ['home', 'services', 'our-gallery', 'about', 'contact'];
 const pages = Object.fromEntries(await Promise.all(paths.map(async path => [path, await readFile(resolve(root, 'dist', `${path}.html`), 'utf8')])));
@@ -17,6 +17,7 @@ for (const [path, html] of Object.entries(pages)) {
   const schema = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
   const salons = schema['@graph'].filter(n => n['@type'] === 'NailSalon');
   assert.equal(salons.length, 3);
+  assert.doesNotMatch(JSON.stringify(schema), /aggregateRating|"Review"|reviewRating/i, `${path}: no self-served review stars in structured data (Google guidelines)`);
   for (const location of locations) {
     const salon = salons.find(n => n['@id'] === `${origin}/contact#${location.id}`);
     assert.ok(salon, `${path}: original location in structured data`);
@@ -57,6 +58,25 @@ assert.ok(heroEnd !== -1 && heroEnd < inspirationStart && inspirationStart < ser
 assert.ok((pages.home.match(/class="[^"]*inspiration-slide/g) || []).length >= 8, 'Home inspiration strip contains multiple images');
 assert.ok(pages.home.includes('data-gallery-marquee'), 'Home inspiration strip is configured for motion');
 assert.equal((pages.services.match(/class="menu-sheet"/g) || []).length, menuSheets.length, 'All 8 original menu sheets retained');
+// Home reviews: owner-selected Google reviews, word for word, disclosed as a selection, with each salon's Google links.
+const locationIds = new Set(locations.map(l => l.id));
+for (const [i, review] of reviews.entries()) {
+  assert.ok(locationIds.has(review.location), `review ${i + 1}: location must be one of ${[...locationIds].join(', ')}`);
+  assert.match(review.date, /^20\d\d-(0[1-9]|1[0-2])$/, `review ${i + 1}: date must be YYYY-MM`);
+  assert.ok(review.name.trim() && review.name.length <= 32, `review ${i + 1}: short display name (first name + last initial)`);
+  assert.ok(review.text.trim().length >= 20 && review.text.length <= 700, `review ${i + 1}: text 20–700 characters; pick another review rather than shortening one`);
+}
+assert.equal(new Set(reviews.map(r => r.text.trim())).size, reviews.length, 'No duplicate reviews');
+assert.deepEqual(Object.keys(reviewLinks).sort(), [...locationIds].sort(), 'One Google review link slot per salon');
+for (const [id, link] of Object.entries(reviewLinks)) if (link) assert.match(link, /^https:\/\/g\.page\/r\/[\w-]+\/review$/, `${id}: review link is the Business Profile "Get more reviews" link`);
+const reviewsStart = pages.home.indexOf('<section class="reviews-section');
+const reviewsHtml = pages.home.slice(reviewsStart, pages.home.indexOf('</section>', reviewsStart));
+assert.ok(pages.home.indexOf('<div class="quote-band"') < reviewsStart && reviewsStart < pages.home.indexOf('<section class="visit-section'), 'Home reviews sit between the quote band and the locations');
+assert.equal((reviewsHtml.match(/class="review-source"/g) || []).length, locations.length, 'Google review links for every salon');
+assert.equal((reviewsHtml.match(/target="_blank" rel="noopener noreferrer"/g) || []).length, locations.length * 2, 'Read and leave-a-review links per salon open safely in a new tab');
+assert.equal((reviewsHtml.match(/class="review-card"/g) || []).length, reviews.length, 'Every review in src/data.mjs is shown');
+if (reviews.length) assert.ok(reviewsHtml.includes('A selection of five-star reviews from Google, shared word for word.'), 'Reviews are disclosed as a selection');
+for (const review of reviews) assert.ok(decode(reviewsHtml).includes(review.text), `review by ${review.name} shown word for word`);
 assert.ok(pages.contact.includes('10:00 AM – 08:00 PM') && pages.contact.includes('01:00 PM – 06:00 PM'), 'Original hours retained');
 const config = JSON.parse(await readFile(resolve(root, 'vercel.json'), 'utf8'));
 assert.equal(config.cleanUrls, true);
@@ -85,4 +105,4 @@ for (const [path, html] of Object.entries({ ...pages, '404': error })) {
   assert.doesNotMatch(footerOf(html), /footer-locations|footer-phone|data-cta=|href="tel:|maps\/dir\//, `${path}: no duplicate location block in footer`);
   assert.doesNotMatch(footerOf(html), /footer-hours|Open hours|Monday|Sunday|10:00 AM|08:00 PM|01:00 PM|06:00 PM/i, `${path}: no opening hours in footer`);
 }
-console.log(`PASS: 5 preserved routes; ${links} internal links; ${assets.size} referenced assets; exact addresses, phones, hours, home/about copy; 23 gallery photos; moving Home inspiration strip; no gallery captions or hero index; 8 original menu sheets; legacy heading anchors; shared three-location announcement; shared footer across 6 templates without hours; no public email; Vercel clean URLs and 404.`);
+console.log(`PASS: 5 preserved routes; ${links} internal links; ${assets.size} referenced assets; exact addresses, phones, hours, home/about copy; 23 gallery photos; moving Home inspiration strip; Home reviews (${reviews.length} shown word for word, Google links for 3 salons, no self-served stars); no gallery captions or hero index; 8 original menu sheets; legacy heading anchors; shared three-location announcement; shared footer across 6 templates without hours; no public email; Vercel clean URLs and 404.`);

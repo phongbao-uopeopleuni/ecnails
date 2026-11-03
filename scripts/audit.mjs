@@ -202,7 +202,20 @@ async function menuSheetFlow() {
   dialog.querySelector('.lightbox-close').click(); await new Promise(r => setTimeout(r, 100));
   return tools && zoomed && !dialog.open ? '' : `menu poster viewer: tools=${tools} zoomed=${zoomed} closed=${!dialog.open}`;
 }
-const flows = { 'home@390': homeMobileFlow, 'home@1440': inspirationFlow, 'our-gallery@1440': galleryFlow, 'our-gallery@390': galleryFlow, 'services@1440': menuSheetFlow };
+// Home reviews: Google links for every salon; when more cards exist than fit collapsed, "Show all" opens and closes them.
+async function reviewsFlow() {
+  const section = document.querySelector('[data-reviews]');
+  if (!section) return 'Home reviews section missing';
+  const problems = [], links = [...section.querySelectorAll('.review-source-links a')];
+  if (links.length !== 6 || !links.every(a => a.target === '_blank' && /noopener/.test(a.rel) && a.href.startsWith('https://'))) problems.push(`review links=${links.length}`);
+  const cards = [...section.querySelectorAll('.review-card')], more = section.querySelector('.review-more'), shown = () => cards.filter(c => c.offsetParent).length;
+  if (more && !more.hidden) {
+    const collapsed = shown(); more.click(); const opened = shown(); more.click();
+    if (collapsed >= cards.length || opened !== cards.length || shown() !== collapsed || more.getAttribute('aria-expanded') !== 'false') problems.push(`review toggle collapsed=${collapsed} opened=${opened} total=${cards.length}`);
+  } else if (shown() !== cards.length) problems.push(`reviews hidden without a Show all button: ${shown()}/${cards.length}`);
+  return problems.join('; ');
+}
+const flows = { 'home@390': [homeMobileFlow, reviewsFlow], 'home@768': reviewsFlow, 'home@1440': [inspirationFlow, reviewsFlow], 'our-gallery@1440': galleryFlow, 'our-gallery@390': galleryFlow, 'services@1440': menuSheetFlow };
 
 const profile = await mkdtemp(join(tmpdir(), 'ecn-audit-'));
 const chrome = spawn(chromePath, ['--headless=new', '--disable-gpu', '--no-first-run', '--hide-scrollbars', '--remote-debugging-port=0', `--user-data-dir=${profile}`, 'about:blank']);
@@ -239,8 +252,7 @@ try {
       // Load lazy images too, so every image is checked and counted in the page weight.
       await evaluate(`(async () => { document.querySelectorAll('img[loading=lazy]').forEach(i => { i.loading = 'eager'; }); await document.fonts.ready; await Promise.all([...document.images].map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; }))); })()`);
       const result = await evaluate(`(${pageAudit})()`);
-      const flow = flows[`${page}@${width}`];
-      if (flow) { const problem = await evaluate(`(${flow})()`); if (problem) result.errors.push(problem); }
+      for (const flow of [flows[`${page}@${width}`]].flat().filter(Boolean)) { const problem = await evaluate(`(${flow})()`); if (problem) result.errors.push(problem); }
       await sleep(100);
       result.errors.push(...consoleLog.filter(e => !(page === 'missing-page' && /status of 404/.test(e))).map(e => `console: ${e}`));
       result.bytes = bytes;

@@ -1,7 +1,7 @@
 import { readFile, writeFile, mkdir, cp, rm, readdir } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { origin, navigation, locations, introduction, serviceCategories, menus, menuSheets, gallery } from '../src/data.mjs';
+import { origin, navigation, locations, introduction, serviceCategories, menus, menuSheets, gallery, reviews, reviewLinks } from '../src/data.mjs';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = resolve(root, 'dist');
 if (dist !== resolve(root, 'dist') || !dist.startsWith(root)) throw Error('Invalid build output');
@@ -25,6 +25,8 @@ const star = '<svg class="star" viewBox="0 0 40 40" fill="none" aria-hidden="tru
 const alias = id => `<span class="legacy-anchor" id="${id}" aria-hidden="true"></span>`;
 const phone = location => `tel:+1${location.phone.replaceAll('-', '')}`;
 const directions = location => `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(location.address)}`;
+const googleMaps = location => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`Nail salon ${location.address}`)}`;
+const reviewMonth = date => new Date(`${date}-01T00:00:00Z`).toLocaleString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
 const logo = `<span class="brand-name">EC <span class="brand-star">★</span> NAILS</span><span class="brand-sub">& SPA · NORTH CAROLINA</span>`;
 const button = (href, text, cls = 'button') => `<a class="${cls}" href="${href}">${text}${arrow}</a>`;
 function salonActions(location, extraClass = '') {
@@ -49,6 +51,18 @@ function locationCards() {
 function visitSection() {
   return `<section class="visit-section section wrap" id="locations"><div class="section-heading"><div><p class="eyebrow">Close to home. A world away.</p><h2>Find your <em>little escape.</em></h2></div><p>Three locations. The same welcoming feeling.<br>We look forward to seeing you.</p></div>${locationCards()}<div class="hours-strip"><span>${star} Make time for yourself.</span><p>Mon – Sat <strong>10:00 AM – 08:00 PM</strong></p><p>Sunday <strong>01:00 PM – 06:00 PM</strong></p></div></section>`;
 }
+// Owner-selected five-star Google reviews, shown word for word; the intro says they are a selection (FTC review rules).
+function reviewsSection() {
+  const names = Object.fromEntries(locations.map(l => [l.id, l.name]));
+  const cards = reviews.map(r => `<figure class="review-card"><p class="review-stars" role="img" aria-label="Rated 5 out of 5 stars">★★★★★</p><blockquote><p>${escape(r.text)}</p></blockquote><figcaption><strong>${escape(r.name)}</strong><span>${escape(names[r.location])} · Google review · ${reviewMonth(r.date)}</span></figcaption></figure>`).join('');
+  const sources = locations.map((l, i) => {
+    const write = reviewLinks[l.id] || googleMaps(l), read = reviewLinks[l.id]?.replace(/\/review$/, '') || googleMaps(l);
+    return `<div class="review-source"><p class="eyebrow">Location ${i + 1} · ${l.city}</p><h3>${l.name}</h3><div class="review-source-links"><a href="${escape(read)}" target="_blank" rel="noopener noreferrer" aria-label="Read all Google reviews for ${escape(l.name)} (opens in a new tab)">Read all reviews <span aria-hidden="true">↗</span></a><a href="${escape(write)}" target="_blank" rel="noopener noreferrer" aria-label="Leave a Google review for ${escape(l.name)} (opens in a new tab)">Leave a review <span aria-hidden="true">↗</span></a></div></div>`;
+  }).join('');
+  const intro = reviews.length ? 'A selection of five-star reviews from Google, shared word for word.<br>Read every review, or leave your own, below.' : 'See what our guests say about each salon on Google,<br>or leave a review of your own.';
+  const list = reviews.length ? `<div class="review-grid">${cards}</div><button class="text-link review-more" type="button" aria-expanded="false" data-label="Show all ${reviews.length} reviews" hidden>Show all ${reviews.length} reviews</button>` : '';
+  return `<section class="reviews-section section wrap" id="reviews" aria-labelledby="reviews-title" data-reviews><div class="section-heading"><div><p class="eyebrow">Kind words from our guests</p><h2 id="reviews-title">Loved by our <em>neighbors.</em></h2></div><p>${intro}</p></div>${list}<div class="review-sources"><p class="review-sources-title">Read every review on Google</p>${sources}</div></section>`;
+}
 function galleryTile(item, classes = '') {
   return `<button class="gallery-tile${classes ? ` ${classes}` : ''}" data-category="${item.category}" data-lightbox="${item.image}" data-caption="${escape(item.alt)}" aria-label="Enlarge: ${escape(item.alt)}"><img src="${item.image}" width="720" height="800" alt="${escape(item.alt)}" loading="lazy"><span class="gallery-zoom" aria-hidden="true">↗</span></button>`;
 }
@@ -63,7 +77,7 @@ function home() {
   ${inspirationSection()}
   <section class="services-section section wrap">${alias('h.7fp4bsr2gm0o')}<div class="section-heading"><div><p class="eyebrow">Your time. Your treatment.</p><h2>A full-service <em>experience.</em></h2></div>${button('/services', 'Discover the menu', 'text-link')}</div><div class="service-grid">${serviceCategories.map((s, i) => `<article class="service-card">${alias(['h.37yuarhgw5cc', 'h.ttet8krwc7wf', 'h.5pcb2br4s767'][i])}<a class="service-image" href="/services#${s.id}"><img src="${s.image}" width="650" height="576" alt="${s.label}" loading="lazy"><span class="image-arrow">${arrow}</span></a><div class="service-title"><h3><a href="/services#${s.id}">${s.name}</a></h3><span>${s.number}</span></div><p>${s.description}</p></article>`).join('')}</div></section>
   <section class="about-teaser"><div class="about-photo"><img src="/images/salon-interior.jpg" width="1280" height="960" loading="lazy" alt="The welcoming interior of EC Star Nails & Spa"><span class="photo-note">YOUR NEIGHBORHOOD SANCTUARY</span></div><div class="about-copy">${alias('h.v7c9ooq9yagq')}<p class="eyebrow">Welcome to EC Star Nails & Spa</p><h2>Come as you are.<br>Leave feeling <em>like you.</em></h2><p>${introduction[0]}</p><p>${introduction[1]}</p>${button('/about', 'A little more about us', 'text-link')}</div></section>
-  <div class="quote-band"><span>${star}</span><p>We believe that you are<br><em>your best accessory.</em></p><span>${star}</span></div>${visitSection()}`;
+  <div class="quote-band"><span>${star}</span><p>We believe that you are<br><em>your best accessory.</em></p><span>${star}</span></div>${reviewsSection()}${visitSection()}`;
 }
 const pageHero = (eyebrow, title, desc) => `<section class="page-hero wrap"><p class="eyebrow">${eyebrow}</p><h1>${title}</h1><p>${desc}</p>${star}</section>`;
 function menuDesign(index) {

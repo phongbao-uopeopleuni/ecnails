@@ -50,3 +50,10 @@ export const gallery = [
   { index: 24, category: 'art', alt: 'Hand-painted floral nail designs' },
   { index: 25, category: 'art', alt: 'Pink and burgundy decorative manicure' }
 ].map(item => ({ ...item, image: `/images/original/our-gallery-${String(item.index).padStart(2, '0')}.jpg` }));
+// Five-star Google reviews chosen by the owner for the Home "Kind words" section. Paste each review word for word: never
+// shorten, correct or reword a guest's text. name: first name + last initial, location: an id from `locations`, date: 'YYYY-MM'.
+// While the list is empty the section shows only the Google review links for each salon.
+export const reviews = [
+];
+// Each salon's "Get more reviews" link from its Google Business Profile (https://g.page/r/…/review). Empty: both links open Google Maps.
+export const reviewLinks = { 'fire-tower': '', 'greenville-blvd': '', washington: '' };

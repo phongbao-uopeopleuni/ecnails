@@ -87,6 +87,25 @@ if (marquee && marqueeTrack && originalRun) {
   requestAnimationFrame(() => marquee.classList.add('is-ready'));
 }
 
+// Home reviews: show the first rows with a "Show all" toggle; without JavaScript every review stays visible.
+const reviewSection = document.querySelector('[data-reviews]');
+const moreReviews = reviewSection?.querySelector('.review-more');
+const reviewCards = reviewSection ? reviewSection.querySelectorAll('.review-card') : [];
+if (moreReviews) {
+  // Cards shown while collapsed; keep in step with the nth-child rules in styles.css.
+  const collapsedCount = () => matchMedia('(max-width: 700px)').matches ? 3 : matchMedia('(max-width: 1000px)').matches ? 4 : 6;
+  const syncReviews = () => { moreReviews.hidden = reviewCards.length <= collapsedCount(); };
+  reviewSection.classList.add('is-collapsible');
+  syncReviews();
+  addEventListener('resize', syncReviews);
+  moreReviews.addEventListener('click', () => {
+    const open = reviewSection.classList.toggle('is-open');
+    moreReviews.setAttribute('aria-expanded', String(open));
+    moreReviews.textContent = open ? 'Show fewer reviews' : moreReviews.dataset.label;
+    if (!open) reviewSection.querySelector('.review-grid').scrollIntoView({ block: 'start' });
+  });
+}
+
 dialog?.querySelector('.lightbox-close').addEventListener('click', () => dialog.close());
 dialog?.querySelector('.lightbox-prev').addEventListener('click', () => showImage(selected - 1));
 dialog?.querySelector('.lightbox-next').addEventListener('click', () => showImage(selected + 1));
